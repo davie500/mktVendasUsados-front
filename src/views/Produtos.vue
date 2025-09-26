@@ -1,56 +1,56 @@
 <template>
   <v-container>
-    <h2>Cadastro de Produtos</h2>
-
+    <h1>Produtos</h1>
     <v-form @submit.prevent="adicionarProduto">
-      <v-text-field v-model="produto.nome" label="Nome" required />
-      <v-text-field v-model="produto.preco" label="Preço" type="number" required />
-      <v-text-field v-model="produto.quantidade" label="Quantidade" type="number" required />
-      <v-btn type="submit" color="primary" :loading="saving">Adicionar</v-btn>
+      <v-text-field label="Nome do Produto" v-model="nome" required></v-text-field>
+      <v-text-field label="Preço" v-model="preco" type="number" required></v-text-field>
+      <v-text-field label="Quantidade" v-model="quantidade" type="number" required></v-text-field>
+      <v-btn color="primary" type="submit">Adicionar Produto</v-btn>
     </v-form>
-
-    <v-divider class="my-4" />
-    <v-table>
-      <thead>
-        <tr>
-          <th class="font-weight-bold">Nome</th>
-          <th class="font-weight-bold">Preço</th>
-          <th class="font-weight-bold">Quantidade</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(p, i) in produtos" :key="i">
-          <td>{{ p.nome }}</td>
-          <td>{{ p.preco }}</td>
-          <td>{{ p.quantidade }}</td>
-        </tr>
-      </tbody>
-    </v-table>
+    <v-divider class="my-4"></v-divider>
+    <div v-if="produtos.length">
+      <h2>Lista de Produtos</h2>
+      <v-list>
+        <v-list-item v-for="(produto, idx) in produtos" :key="idx">
+          <v-list-item-content>
+            <v-list-item-title>{{ produto.nome }}</v-list-item-title>
+            <v-list-item-subtitle>Preço: {{ produto.preco }} | Quantidade: {{ produto.quantidade }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import produtoService, { Produto } from '../services/produtoService'
 
-const produtos = ref<Produto[]>([])
-const produto = ref<Produto>({ nome: '', preco: 0, quantidade: 0 })
-const loading = ref(false)
-const saving = ref(false)
-const error = ref('')
+const nome = ref('')
+const preco = ref('')
+const quantidade = ref('')
+const produtos = ref<{ nome: string; preco: number; quantidade: number }[]>([])
 
-async function loadProdutos() {
-  try {
-    error.value = ''
-    loading.value = true
-    produtos.value = await produtoService.listar()
-  } catch (e) {
-    error.value = 'Erro ao carregar produtos.'
-  } finally {
-    loading.value = false
-  }
+function carregarProdutos() {
+  produtos.value = JSON.parse(localStorage.getItem('produtos') || '[]')
 }
 
+function adicionarProduto() {
+  const novoProduto = {
+    nome: nome.value,
+    preco: Number(preco.value),
+    quantidade: Number(quantidade.value)
+  }
+  const lista = JSON.parse(localStorage.getItem('produtos') || '[]')
+  lista.push(novoProduto)
+  localStorage.setItem('produtos', JSON.stringify(lista))
+  carregarProdutos()
+  nome.value = ''
+  preco.value = ''
+  quantidade.value = ''
+}
+
+onMounted(carregarProdutos)
+</script>
 onMounted(() => {
   loadProdutos()
 })
