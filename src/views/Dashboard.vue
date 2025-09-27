@@ -4,7 +4,7 @@
     <p>Aqui vc encontra os melhores produtos Tec</p>
   </v-container>
   <v-container>
-    produtos
+    separados por idj
     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;">
       <router-link
         v-for="i in 10"

@@ -5,6 +5,6 @@
     <v-btn to="/" text>Dashboard</v-btn>
     <v-btn to="/produtos" text>Produtos</v-btn>
     <v-btn to="/carrinho" text>Carrinho</v-btn>
-    <v-btn to="/cadastro" text>Cadastro</v-btn>
+    <v-btn to="/perfil" text>Perfil</v-btn>
   </v-app-bar>
 </template>
